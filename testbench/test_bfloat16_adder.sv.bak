@@ -1,0 +1,131 @@
+module test_bfloat16_adder;
+
+logic [15:0] sum; 
+logic ready;
+logic [15:0] a, b;
+logic clock, nreset;
+
+shortreal reala, realb, realsum,rsum;
+logic [31:0] ra, rb;
+
+bfloat16_adder a1 (.sum(sum),.ready(ready),.a(a),.b(b),.clock(clock),.nreset(nreset));
+
+initial
+  begin
+  nreset = '1;
+  clock = '0;
+  #5ns nreset = '1;
+  #5ns nreset = '0;
+  #5ns nreset = '1;
+  forever #5ns clock = ~clock;
+  end
+  task bittoreal(input shortreal number1,number2);
+	  
+	  @(posedge ready); // wait for ready
+	  @(posedge clock); //wait for next clock tick
+	  reala = number1;
+	  realb = number2;
+	  ra = $shortrealtobits(reala);
+	  rb = $shortrealtobits(realb);
+	  a = ra[31:16];
+	  b = rb[31:16];
+	  rsum = reala + realb;
+	  
+	  @(posedge ready);
+	  @(posedge clock);
+	  realsum = $bitstoshortreal({sum, {16{1'b0}}});
+	  $display("a bfloat:%b %b %b", a[15], a[14:7], a[6:0]);
+	  $display("b bfloat:%b %b %b", b[15], b[14:7], b[6:0]);
+	  $display("sum bfloat:%b %b %b", sum[15], sum[14:7], sum[6:0]);
+	  
+	  $display("caculate by us  %f\n", realsum);
+	  $display("computer answer %f\n",rsum);
+  endtask
+  
+initial
+  begin
+  
+  bittoreal(1.0,1.0);
+  bittoreal(2.0,1.14159);
+  $stop;
+//  //Test 1 -- reset
+//  @(posedge ready); // wait for ready
+//  //Test 2 -- 1.0 + 1.0 
+//  @(posedge clock); //wait for next clock tick
+//  reala = 1.0;
+//  ra = $shortrealtobits(reala);
+//  realb = 1.0;
+//  rb = $shortrealtobits(realb);
+//  rsum = reala +realb ;
+//  a = ra[31:16];
+//  b = rb[31:16];
+//
+//  @(posedge ready);
+//  @(posedge clock);
+//  realsum = $bitstoshortreal({sum, {16{1'b0}}});
+//  $display("a bfloat:%b %b %b", a[15], a[14:7], a[6:0]);
+//  $display("b bfloat:%b %b %b", b[15], b[14:7], b[6:0]);
+//  $display("sum bfloat:%b %b %b", sum[15], sum[14:7], sum[6:0]);
+//  
+//  $display("caculate by us %f\n", realsum);
+//  $display("computer answer %f\n",rsum);
+  
+  
+  
+//  $display("Test 2 %f\n", realsum);
+  
+  //Test 3 -- 42.0 + 3.14159 
+  //@(posedge clock);
+  
+  
+  
+//  reala = 2.0;
+//  ra = $shortrealtobits(reala);
+//  realb = 1.14159;
+//  rb = $shortrealtobits(realb);
+//  a = ra[31:16];
+//  b = rb[31:16];
+//  @(posedge ready);
+//  @(posedge clock);
+//  realsum = $bitstoshortreal({sum, {16{1'b0}}});
+//  $display("Test 3 %f\n", realsum);
+//  
+//  //next test
+//  
+//  reala = 2.093750;
+//  ra = $shortrealtobits(reala);
+//  realb = -1.195313;
+//  rb = $shortrealtobits(realb);
+//  a = ra[31:16];
+//  b = rb[31:16];
+//  @(posedge ready);
+//  @(posedge clock);
+//  realsum = $bitstoshortreal({sum, {16{1'b0}}});
+//  $display("Test 4 %f\n", realsum);
+  
+  
+  
+  
+  //Test 11 -- 1.0 + NaN 
+  //@(posedge clock);
+  
+  
+//  reala = 1.0;
+//  a = $shortrealtobits(reala);
+//  realb = (0.0/0.0);
+//  b = $shortrealtobits(realb);
+//  a = ra[31:16];
+//  b = rb[31:16];
+//  @(posedge ready);
+//  @(posedge clock);
+//  realsum = $bitstoshortreal({sum, {16{1'b0}}});
+//  $display("Test 12 %f\n", realsum);
+//  @(posedge ready);
+//  $stop;
+  
+  
+  end
+  
+  
+endmodule
+  

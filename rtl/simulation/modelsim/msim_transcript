@@ -1,0 +1,66 @@
+# Reading F:/modelsim/modelsim/modelsim_ase/tcl/vsim/pref.tcl
+# do bfloat16_adder_run_msim_rtl_verilog.do
+# if {[file exists rtl_work]} {
+# 	vdel -lib rtl_work -all
+# }
+# vlib rtl_work
+# vmap work rtl_work
+# Model Technology ModelSim ALTERA vmap 10.4d Lib Mapping Utility 2015.12 Dec 30 2015
+# vmap work rtl_work 
+# Copying F:/modelsim/modelsim/modelsim_ase/win32aloem/../modelsim.ini to modelsim.ini
+# Modifying modelsim.ini
+# 
+# vlog -sv -work work +incdir+F:/VLSI_code/bfloat16_adder_behav/rtl {F:/VLSI_code/bfloat16_adder_behav/rtl/bfloat16_adder_test.sv}
+# Model Technology ModelSim ALTERA vlog 10.4d Compiler 2015.12 Dec 30 2015
+# Start time: 01:11:58 on Nov 21,2022
+# vlog -reportprogress 300 -sv -work work "+incdir+F:/VLSI_code/bfloat16_adder_behav/rtl" F:/VLSI_code/bfloat16_adder_behav/rtl/bfloat16_adder_test.sv 
+# -- Compiling module bfloat16_adder_test
+# 
+# Top level modules:
+# 	bfloat16_adder_test
+# End time: 01:11:58 on Nov 21,2022, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# 
+# vlog -sv -work work +incdir+F:/VLSI_code/bfloat16_adder_behav/rtl/../testbench {F:/VLSI_code/bfloat16_adder_behav/rtl/../testbench/test_bfloat16_adder.sv}
+# Model Technology ModelSim ALTERA vlog 10.4d Compiler 2015.12 Dec 30 2015
+# Start time: 01:11:58 on Nov 21,2022
+# vlog -reportprogress 300 -sv -work work "+incdir+F:/VLSI_code/bfloat16_adder_behav/rtl/../testbench" F:/VLSI_code/bfloat16_adder_behav/rtl/../testbench/test_bfloat16_adder.sv 
+# -- Compiling module test_bfloat16_adder
+# 
+# Top level modules:
+# 	test_bfloat16_adder
+# End time: 01:11:58 on Nov 21,2022, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# 
+# vsim -t 1ps -L altera_ver -L lpm_ver -L sgate_ver -L altera_mf_ver -L altera_lnsim_ver -L cyclonev_ver -L cyclonev_hssi_ver -L cyclonev_pcie_hip_ver -L rtl_work -L work -voptargs="+acc"  test_bfloat16_adder
+# vsim -t 1ps -L altera_ver -L lpm_ver -L sgate_ver -L altera_mf_ver -L altera_lnsim_ver -L cyclonev_ver -L cyclonev_hssi_ver -L cyclonev_pcie_hip_ver -L rtl_work -L work -voptargs=""+acc"" test_bfloat16_adder 
+# Start time: 01:11:59 on Nov 21,2022
+# Loading sv_std.std
+# Loading work.test_bfloat16_adder
+# Loading work.bfloat16_adder_test
+# 
+# add wave *
+# view structure
+# .main_pane.structure.interior.cs.body.struct
+# view signals
+# .main_pane.objects.interior.cs.body.tree
+# run -all
+# a bfloat:0 01111111 0000000 1.000000
+# b bfloat:0 00000000 0000000 0.000000
+# sum bfloat:0 01111111 0000000
+# caculate by us  1.000000
+# 
+# computer answer 1.000000
+# 
+# a bfloat:0 00000000 0000000 0.000000
+# b bfloat:1 01111111 0000000 -1.000000
+# sum bfloat:1 01111111 0000000
+# caculate by us  -1.000000
+# 
+# computer answer -1.000000
+# 
+# ** Note: $stop    : F:/VLSI_code/bfloat16_adder_behav/rtl/../testbench/test_bfloat16_adder.sv(73)
+#    Time: 110 ns  Iteration: 1  Instance: /test_bfloat16_adder
+# Break in Module test_bfloat16_adder at F:/VLSI_code/bfloat16_adder_behav/rtl/../testbench/test_bfloat16_adder.sv line 73
+# End time: 01:12:12 on Nov 21,2022, Elapsed time: 0:00:13
+# Errors: 0, Warnings: 0

@@ -1,0 +1,151 @@
+module bfloat16_adder (output logic [15:0] sum,
+			output logic ready, input logic [15:0] a, b,
+			input logic clock, nreset);
+			
+//	enum{IDLE,EXTRACTA,EXTRACTB,COMPARE,ADD,RESTOR,FINISH} state; 
+	enum{IDLE,EXTRACTA,COMPARE,ADD,RESTOR,FINISH} state; 
+	
+	logic [6:0] sum_mantissa;
+	
+	logic[7:0] a_exponent,b_exponent,sum_exponent;
+	
+	logic a_signal,b_signal,sum_error;
+	
+	logic[:0]a_combination,b_combination,sum_combination;//{signal，count out,value 1,mantissa}
+	
+	
+	always_ff@(posedge clock,negedge nreset)
+		if(!nreset)begin
+			state <= IDLE;
+			sum = '0;
+		end
+		else 
+			case(state)
+				IDLE: 
+					state <= EXTRACTA;
+					
+				EXTRACTA:
+					begin
+						if(((a[14:7] ==8'b1111_1111) && (a[6:0] != 7'd0)) || ((a[14:7] ==8'b1111_1111) && (a[6:0] == 7'd0)))
+							begin
+								state <= FINISH ;
+								sum_error <= 1'b1;
+							end
+						else 
+							sum_error <= 1'b0;
+							a_signal <= a[15];
+							a_exponent <= a[14:7];
+							a_combination <= {a[15],1'b0,1'b1,a[6:0]};
+							b_signal <= b[15];
+							b_exponent <= b[14:7];
+							b_combination <= {b[15],1'b0,1'b1,b[6:0]};
+							state <= COMPARE ;
+							
+					end
+				COMPARE:
+					begin
+						if(a_exponent > b_exponent) 
+							if((a_exponent -b_exponent)>= 4'd8 ) // huge diffenence 
+								begin
+									sum_exponent <= a_exponent;
+									sum_combination <= a_combination ;
+									sum_mantissa <= a_combination[6:0];
+									state <= FINISH ;
+								end
+							else 
+								begin
+									b_exponent <= b_exponent + 1'b1;
+									b_combination[7:0] ={1'b0,b_combination[7:1]} ;
+									state <= COMPARE; // untile a_exponent = b_exponent;
+								end
+						else if (b_exponent > a_exponent)
+							begin
+								if((b_exponent - a_exponent)>= 4'd8 )
+									begin
+										sum_exponent <= b_exponent;
+										sum_combination <= b_combination ;
+										sum_mantissa <= b_combination[6:0];
+										state <= FINISH ;
+									end
+								else 
+									begin
+										a_exponent <= a_exponent + 1'b1;
+										a_combination[7:0] ={1'b0,a_combination[7:1]} ;
+										
+										state <= COMPARE;
+									end
+							end
+						else if (a_exponent == b_exponent)
+								begin
+									sum_exponent <= a_exponent;
+									state <= ADD;
+								end
+								
+					end
+				  ADD:
+					begin
+						if(a_signal == b_signal)
+							begin
+								sum_combination[8:0] <= a_combination[8:0] + b_combination[8:0];
+								sum_combination[9] <= a_signal ;
+								
+							end
+						else if ((a_signal!= b_signal) && (a_combination[8:0] >b_combination[8:0]))
+							begin
+								sum_combination[8:0] <= a_combination[8:0] - b_combination[8:0];
+								sum_combination[9] <= a_signal ;
+							end
+						else if ((a_signal!= b_signal) && (b_combination[8:0] > a_combination[8:0] ))
+							begin
+								sum_combination[8:0] = b_combination[8:0] - a_combination[8:0] ;
+								sum_combination[9] <= b_signal ;
+							end
+						state <= RESTOR;
+					end
+							
+				
+				RESTOR :
+					begin
+						if(sum_combination[8] == 1'b1) // count_out is 1
+							begin
+							sum_exponent <= sum_exponent + 1'b1 ;
+							sum_mantissa <= sum_combination[7:1]; // abandon the final bit
+							state <= FINISH ;
+							end
+						else if (sum_combination[7] == 1'b0)
+							begin
+								sum_exponent <= sum_exponent - 1'b1;
+								sum_combination[8:0] <={sum_combination[7:0],1'b0};
+								state <= RESTOR ; // until find the first one
+							end
+						else if (sum_combination[7] == 1'b1)
+							begin
+								sum_mantissa <=  sum_combination[6:0]; //abandon the value 1
+								state <= FINISH;
+							end
+							
+					end
+				 FINISH :
+					begin
+						if(sum_error == 1'b1)
+							sum <= 'x ;
+						else
+							sum <= {sum_combination[9],sum_exponent,sum_mantissa}; // signal , e, mantissa
+						
+						state <=  IDLE ;
+					end
+					default:  state <= IDLE ;
+			
+				
+			endcase 
+	
+	always_comb
+		begin
+			if(state == IDLE)
+				ready = 1'b1;
+			else 
+				ready = 1'b0;
+		end
+		
+			
+endmodule 

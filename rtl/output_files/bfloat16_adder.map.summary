@@ -1,0 +1,17 @@
+Analysis & Synthesis Status : Successful - Mon Nov 21 01:23:00 2022
+Quartus Prime Version : 18.0.0 Build 614 04/24/2018 SJ Standard Edition
+Revision Name : bfloat16_adder
+Top-level Entity Name : bfloat16_adder_test
+Family : Cyclone V
+Logic utilization (in ALMs) : N/A
+Total registers : 822
+Total pins : 51
+Total virtual pins : 0
+Total block memory bits : 0
+Total DSP Blocks : 0
+Total HSSI RX PCSs : 0
+Total HSSI PMA RX Deserializers : 0
+Total HSSI TX PCSs : 0
+Total HSSI PMA TX Serializers : 0
+Total PLLs : 0
+Total DLLs : 0
